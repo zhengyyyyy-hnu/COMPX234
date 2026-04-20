@@ -4,10 +4,9 @@ import time
 
 def client_task( test_number):
     # just only one client worktesk
-
+    #"C:\Users\Administrator\Documents\GitHub\COMPX234\test-workload\client_1.txt"
     #origin textfilename
-    Testfilename =f"test-workload\client_{test_number}.txt"
-
+    Testfilename =rf"C:\Users\Administrator\Documents\GitHub\COMPX234\test-workload\client_{test_number}.txt"
 
     client_socket = None
     try :
@@ -23,5 +22,21 @@ def client_task( test_number):
     finally:
         if client_socket:
             client_socket.close()
+
+def main():
+    clients = []
+    for i in range(10):
+        t = threading.Thread(target=client_task, args=(i+1,))
+        clients.append(t)
+        t.start()
+        time.sleep(0.1)
+    
+    for t in clients:
+        t.join()
+    #this part is same with your class file
+
+if __name__ == "__main__":
+    main()
+
     
     
