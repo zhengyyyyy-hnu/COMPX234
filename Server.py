@@ -11,4 +11,17 @@ def start_server():
     server_socket.listen(5)
     print("Server online ! ")
 
-
+    try:
+        while True:
+            client_socket, addr = server_socket.accept()
+            # Create a thread for each client 
+            client_thread = threading.Thread(
+                target=handle_client,
+                args=(client_socket, addr),
+                daemon=True
+            )
+            client_thread.start()
+    except KeyboardInterrupt:
+        print("Server is close")
+    finally:
+        server_socket.close()
