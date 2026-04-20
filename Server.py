@@ -25,3 +25,6 @@ def start_server():
         print("Server is close")
     finally:
         server_socket.close()
+
+def handle_client(client_socket, addr):
+    
