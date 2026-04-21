@@ -28,15 +28,14 @@ class read_commend:
 
         if op in ("READ", "GET"):
            if len(parts) < 2:
-              print(f"[{op}] Error: missing key")
-              return
+              return (f"ERR[{op}] ")
            k = parts[1]
            if op == "READ":
               res = rc.read(k)
-              print(f"READ {k} -> v = '{res}'")
+              return (f"OK( {k} ,'{res}')READ")
            else:
-              res = rc.get(k)
-              print(f"GET {k} -> v = '{res}'")
+              res = rc.get(k)   
+              return(f"OK( {k} , '{res}')REMOVED")
 
         elif op == "PUT":
             if len(parts) < 3:
@@ -45,7 +44,8 @@ class read_commend:
             k = parts[1]
             v = parts[2]
             res = rc.put(k, v)
-            print(f"PUT {k} {v} -> e = {res}")
+            
+            return (f"OK({k} , {v} )add")
         
         else:
              print(f"Unsupported command: {op}")
@@ -82,9 +82,16 @@ def handle_client(client_socket, addr):
     try :
         command = client_socket.recv(1024).decode("utf-8")
         rc = read_commend()
-        rc.execute_command(rc, command)
+        response = command + " : " + rc.execute_command(rc, command)
+        client_socket.sendall(response.encode("utf-8"))
+    except Exception as e:
+        print (f"Error handling client{addf}:{e}")
+    finally:
+        client_socket.close()
+        print(f"Connection with {addr} closed")
 
-        
+if __name__ == "__main__":
+    start_server()
         
 
        
