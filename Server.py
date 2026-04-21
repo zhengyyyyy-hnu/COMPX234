@@ -1,6 +1,27 @@
 import socket
 import threading
 
+
+class read_commend:
+    def _init_(self):
+        self.tuples = {}
+
+    def read(self,key):
+        return self.tuples.get(key,"")
+
+    def get(self,key):
+        return self.tuples.pop(key,"")
+
+    def put(self,key,value):
+        if key not in self.tuples:
+            self.tuple[key]=value
+            return 0
+        return 1
+    
+    
+    
+
+
 def start_server():
     host = "zyzhshost"
     port = 51233
@@ -27,5 +48,9 @@ def start_server():
         server_socket.close()
 
 def handle_client(client_socket, addr):
+    try :
+        command = client_socket.recv(1024).decode("utf-8")
 
+       
     
+
