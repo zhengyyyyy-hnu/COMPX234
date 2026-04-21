@@ -18,9 +18,40 @@ class read_commend:
             return 0
         return 1
     
-    
-    
+    def execute_command(rc, line):
+        line = line.strip()
+        if not line:
+           return
 
+        parts = line.split(maxsplit=2)
+        op = parts[0].upper()
+
+        if op in ("READ", "GET"):
+           if len(parts) < 2:
+              print(f"[{op}] Error: missing key")
+              return
+           k = parts[1]
+           if op == "READ":
+              res = rc.read(k)
+              print(f"READ {k} -> v = '{res}'")
+           else:
+              res = rc.get(k)
+              print(f"GET {k} -> v = '{res}'")
+
+        elif op == "PUT":
+            if len(parts) < 3:
+               print("[PUT] Error: missing key or value")
+               return
+            k = parts[1]
+            v = parts[2]
+            res = rc.put(k, v)
+            print(f"PUT {k} {v} -> e = {res}")
+        
+        else:
+             print(f"Unsupported command: {op}")
+
+    
+ 
 
 def start_server():
     host = "zyzhshost"
@@ -50,6 +81,11 @@ def start_server():
 def handle_client(client_socket, addr):
     try :
         command = client_socket.recv(1024).decode("utf-8")
+        rc = read_commend()
+        rc.execute_command(rc, command)
+
+        
+        
 
        
     
