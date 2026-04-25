@@ -3,7 +3,7 @@ import threading
 
 
 class read_commend:
-    def _init_(self):
+    def __init__(self):
         self.tuples = {}
 
     def read(self,key):
@@ -14,11 +14,11 @@ class read_commend:
 
     def put(self,key,value):
         if key not in self.tuples:
-            self.tuple[key]=value
+            self.tuples[key]=value
             return 0
         return 1
     
-    def execute_command(rc, line):
+    def execute_command(self, line):
         line = line.strip()
         if not line:
            return
@@ -31,10 +31,10 @@ class read_commend:
               return (f"ERR[{op}] ")
            k = parts[1]
            if op == "READ":
-              res = rc.read(k)
+              res = self.read(k)
               return (f"OK( {k} ,'{res}')READ")
            else:
-              res = rc.get(k)   
+              res = self.get(k)   
               return(f"OK( {k} , '{res}')REMOVED")
 
         elif op == "PUT":
@@ -43,7 +43,7 @@ class read_commend:
                return
             k = parts[1]
             v = parts[2]
-            res = rc.put(k, v)
+            res = self.put(k, v)
             
             return (f"OK({k} , {v} )add")
         
@@ -54,8 +54,8 @@ class read_commend:
  
 
 def start_server():
-    host = "zyzhshost"
-    port = 51233
+    host = "localhost"
+    port = 51232
     
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -82,7 +82,7 @@ def handle_client(client_socket, addr):
     try :
         command = client_socket.recv(1024).decode("utf-8")
         rc = read_commend()
-        response = command + " : " + rc.execute_command(rc, command)
+        response = command + " : " + rc.execute_command( command)
         client_socket.sendall(response.encode("utf-8"))
     except Exception as e:
         print (f"Error handling client{addr}:{e}")

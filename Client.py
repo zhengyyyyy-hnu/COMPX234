@@ -11,10 +11,10 @@ def client_task( test_number):
     client_socket = None
     try :
         client_socket =socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        client_socket.connect(("zyzhshost",51233))
+        client_socket.connect(("localhost",51232))
         with open(Testfilename, "r", encoding="utf-8") as f:
             for line in f:
-                  client_socket.sendall(line.strip.encode("utf-8"))
+                  client_socket.sendall(line.strip().encode("utf-8"))
         response = client_socket.recv(1024).decode('utf-8')
         print(response)
     except Exception as e:
@@ -26,7 +26,7 @@ def client_task( test_number):
 def main():
     clients = []
     for i in range(10):
-        t = threading.Thread(target=client_task, args=(i+1,))
+        t = threading.Thread(target=client_task, args=(f"client-{i+1}",))
         clients.append(t)
         t.start()
         time.sleep(0.1)
