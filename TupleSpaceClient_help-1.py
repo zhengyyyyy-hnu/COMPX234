@@ -32,8 +32,19 @@ def main():
                 continue
 
             parts = line.split(" ", 2)
-            cmd = parts[0]
-            message = ""
+            if len(parts) < 2:
+                print(f"{line}: ERR Invalid command format")
+                continue
+
+            cmd = parts[0].upper()
+            key = parts[1] if len(parts) >= 2 else ""
+            value = parts[2] if len(parts) >= 3 else ""
+
+            # Validate total length constraint
+            if cmd == "PUT" and len(key + " " + value) > 970:
+                print(f"{line}: ERR PUT exceeds max length")
+                continue
+
 
             # TASK 2: Build the protocol message string to send to the server.
             # Format:  "NNN X key"        for READ / GET
@@ -42,6 +53,22 @@ def main():
             # X is "R" for READ and "G" for GET.
             # Hint: for READ/GET, size = 6 + len(key). For PUT, size = 7 + len(key) + len(value).
             # Reject lines with invalid format or key+" "+value > 970 chars.
+            if cmd == "READ":
+                content = f"R {key}"
+                total_size = 3 + len(content)
+            elif cmd == "GET":
+                content = f"G {key}"
+                total_size = 3 + len(content)
+            elif cmd == "PUT":
+                content = f"P {key} {value}"
+                total_size = 3 + len(content)
+            else:
+                print(f"{line}: ERR Unknown command")
+                continue
+
+            # Size must be 3-digit zero-padded
+            size_str = f"{total_size:03d}"
+            message = size_str + content
 
 
             # TASK 3: Send the message to the server, then receive the response.
