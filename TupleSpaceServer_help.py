@@ -133,6 +133,13 @@ def handle_request(message):
             # TASK 3: READ — look up key in tuple_space.
             # Return "OK (<key>, <value>) read" or "ERR <key> does not exist".
             increment_stat("read_count")
+            if key in tuple_space:
+                value = tuple_space[key]
+                return f"OK ({key}, {value}) read"
+            else:
+                return f"ERR {key} does not exist"
+
+            
 
 
         elif op == "G":
@@ -140,6 +147,11 @@ def handle_request(message):
             # Return "OK (<key>, <value>) removed" or "ERR <key> does not exist".
             # Hint: dict.pop(key, None) removes and returns the value, or None if missing.
             increment_stat("get_count")
+            value = tuple_space.pop(key, None)
+            if value is not None:
+                return f"OK ({key}, {value}) removed"
+            else:
+                return f"ERR {key} does not exist"
 
 
         elif op == "P":
@@ -150,7 +162,18 @@ def handle_request(message):
             # TASK 5: PUT — add (key, value) only if key does not already exist.
             # Validate: len(value) <= 999 and len(key + " " + value) <= 970.
             # Return "OK (<key>, <value>) added" or "ERR <key> already exists".
-            increment_stat("put_count")
+            if len(value) > 999:
+                increment_stat("error_count")
+                return "ERR Value too long"
+            if len(key + " " + value) > 970:
+                increment_stat("error_count")
+                return "ERR Total length exceeds limit"
+
+            if key in tuple_space:
+                return f"ERR {key} already exists"
+            else:
+                tuple_space[key] = value
+                return f"OK ({key}, {value}) added"
 
 
         else:
