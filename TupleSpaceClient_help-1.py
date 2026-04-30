@@ -82,6 +82,8 @@ def main():
             if not resp_size_bytes:
                 print(f"{line}: ERR Connection closed")
                 break
+            if len(resp_size_bytes) < 3:
+               return "ERR connection closed"
             resp_size = int(resp_size_bytes.decode().strip())
 
             # Read response body

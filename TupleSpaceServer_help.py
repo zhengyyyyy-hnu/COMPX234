@@ -89,6 +89,7 @@ def handle_client(client_socket):
             if not message_buffer:
                 break
             message = message_buffer.decode().strip()
+            response = handle_request(message)
 
 
             # Handle the request
@@ -137,11 +138,7 @@ def handle_request(message):
                 value = tuple_space[key]
                 return f"OK ({key}, {value}) read"
             else:
-                return f"ERR {key} does not exist"
-
-            
-
-
+                return f"ERR {key} does not exist"     
         elif op == "G":
             # TASK 4: GET — remove key from tuple_space and return its value.
             # Return "OK (<key>, <value>) removed" or "ERR <key> does not exist".
